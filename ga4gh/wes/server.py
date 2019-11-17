@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 import connexion
 from flask_cors import CORS
 from ga4gh.wes.workflow import workflow

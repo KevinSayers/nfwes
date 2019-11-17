@@ -1,7 +1,5 @@
-six
 connexion
 swagger-ui-py
 flask_cors
-controllers
 bravado-core
 bravado

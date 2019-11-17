@@ -1,17 +1,24 @@
 from subprocess import Popen, PIPE
+from pathlib import Path
+from datetime import datetime
 
-import os
 
 class Workflow(object):
     def __init__(self, run_id, request_data):
         self.run_id = run_id
         self.request_data = request_data
         self.run_obj = self.run()
+        self.starttime = datetime.now()
+        self.cmd = None
+
 
 
     def run(self):
         data = self.request_data
-        process = Popen(['nextflow', 'run', data['workflow_url']], stdout=PIPE, stderr=PIPE)
+        # abs_wf_path = Path(data['workflow_url']).absolute()
+        # print(abs_wf_path)
+        wf_url = data['workflow_url']
+        process = Popen(['nextflow', 'run', wf_url], stdout=PIPE, stderr=PIPE)
         return process
 
     def get_pid(self):
@@ -23,18 +30,31 @@ class Workflow(object):
     def check_running(self):
         return self.run_obj.poll()
 
-    def get_status(self):
-
-        status = None
+    def get_state(self):
+        state = None
         if self.check_running() is None:
-            status = 'RUNNING'
+            state = 'RUNNING'
         else:
             returncode = self.run_obj.returncode
             if returncode == 0:
-                status = "COMPLETE"
+                state = "COMPLETE"
             else:
-                status = "EXECUTOR_ERROR"
+                state = "EXECUTOR_ERROR"
 
-        return {"run_id": self.run_id,
-                "status": status}
+        return state
+
+    def get_status(self):
+        out, err = self.run_obj.communicate()
+
+
+        return {
+            "run_id": self.run_id,
+            "state": self.get_state(),
+            "run_log": {
+                "starttime": self.starttime,
+                "stderr": err,
+                "stdour": out
+            }
+        }
+
 
