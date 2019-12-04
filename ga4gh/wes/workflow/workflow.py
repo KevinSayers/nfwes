@@ -6,20 +6,29 @@ from datetime import datetime
 class Workflow(object):
     def __init__(self, run_id, request_data):
         self.run_id = run_id
+        self.run_dir = self.setup_rundir()
         self.request_data = request_data
-        self.run_obj = self.run()
         self.starttime = datetime.now()
         self.cmd = None
-
+        self.engine_params = self.get_engine_params()
+        self.run_obj = self.run()
 
 
     def run(self):
         data = self.request_data
-        # abs_wf_path = Path(data['workflow_url']).absolute()
-        # print(abs_wf_path)
         wf_url = data['workflow_url']
-        process = Popen(['nextflow', 'run', wf_url], stdout=PIPE, stderr=PIPE)
+        process = Popen(['nextflow',
+                         'run',
+                         wf_url,
+                         self.engine_params],
+                        cwd=self.run_dir,
+                        stdout=PIPE,
+                        stderr=PIPE)
         return process
+
+    def setup_rundir(self):
+        Path(f'/home/kevin/worknfwes/{self.run_id}').mkdir(parents=True, exist_ok=True)
+        return (f'/home/kevin/worknfwes/{self.run_id}')
 
     def get_pid(self):
         return self.run_obj.pid
@@ -57,4 +66,6 @@ class Workflow(object):
             }
         }
 
+    def get_engine_params(self):
+        return self.request_data['workflow_engine_parameters']
 
