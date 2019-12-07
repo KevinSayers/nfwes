@@ -1,7 +1,7 @@
 from subprocess import Popen, PIPE
 from pathlib import Path
 from datetime import datetime
-
+import os
 
 class Workflow(object):
     def __init__(self, run_id, request_data):
@@ -9,22 +9,35 @@ class Workflow(object):
         self.run_dir = self.setup_rundir()
         self.request_data = request_data
         self.starttime = datetime.now()
+        self.run_attachments = self.get_attachments()
         self.cmd = None
         self.engine_params = self.get_engine_params()
+        self.workflow_params = self.get_wf_params()
         self.run_obj = self.run()
+        self.tags = self.get_run_tags()
 
 
     def run(self):
         data = self.request_data
-        wf_url = data['workflow_url']
+        wf_url = self.runnable_url(data['workflow_url'])
         process = Popen(['nextflow',
                          'run',
                          wf_url,
-                         self.engine_params],
+                         self.workflow_params,
+                         self.engine_params,
+                         ],
                         cwd=self.run_dir,
                         stdout=PIPE,
                         stderr=PIPE)
         return process
+
+    def runnable_url(self, url):
+        if 'https://' in url:
+            return url
+        if 'file://' in url:
+            os.symlink(url[7:], os.path.join(self.run_dir, "nfwes.nf"))
+            return os.path.join(self.run_dir, "nfwes.nf")
+
 
     def setup_rundir(self):
         Path(f'/home/kevin/worknfwes/{self.run_id}').mkdir(parents=True, exist_ok=True)
@@ -58,6 +71,7 @@ class Workflow(object):
 
         return {
             "run_id": self.run_id,
+            "tags": self.tags,
             "state": self.get_state(),
             "run_log": {
                 "starttime": self.starttime,
@@ -67,5 +81,25 @@ class Workflow(object):
         }
 
     def get_engine_params(self):
-        return self.request_data['workflow_engine_parameters']
+        try:
+            return self.request_data['workflow_engine_parameters']
+        except:
+            return ''
+
+    def get_attachments(self):
+        return None
+
+    def get_run_tags(self):
+        try:
+            return self.request_data['tags']
+        except:
+            return None
+
+    def get_wf_params(self):
+        try:
+            return self.request_data['workflow_params']
+        except:
+            return ''
+
+
 

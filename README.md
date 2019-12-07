@@ -3,6 +3,15 @@ Exploratory work for GA4GH WES and Nextflow.
 
 Based on: https://github.com/common-workflow-language/workflow-service
 
+
+workflow_params | optional | 	formData 	string
+workflow_type 	| optional |	formData 	string
+workflow_type_version | optional |			formData 	string
+tags | optional |			formData 	string
+workflow_engine_parameters | optional |			formData 	string
+workflow_url | required |			formData 	string
+workflow_attachment | optional |
+
 # Usage
 
 ```shell script
