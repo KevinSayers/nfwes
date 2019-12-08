@@ -5,7 +5,6 @@ import os
 
 class Workflow(object):
     def __init__(self, run_id, request_data):
-        print (request_data)
         self.run_id = run_id
         self.run_dir = self.setup_rundir()
         self.request_data = request_data
@@ -41,8 +40,8 @@ class Workflow(object):
 
 
     def setup_rundir(self):
-        Path(f'/home/kevin/worknfwes/{self.run_id}').mkdir(parents=True, exist_ok=True)
-        return (f'/home/kevin/worknfwes/{self.run_id}')
+        Path(f'{Path.cwd()}/runs/{self.run_id}').mkdir(parents=True, exist_ok=True)
+        return (f'{Path.cwd()}/runs/{self.run_id}')
 
     def get_pid(self):
         return self.run_obj.pid
