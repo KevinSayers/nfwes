@@ -5,6 +5,7 @@ import os
 
 class Workflow(object):
     def __init__(self, run_id, request_data):
+        print (request_data)
         self.run_id = run_id
         self.run_dir = self.setup_rundir()
         self.request_data = request_data
@@ -13,7 +14,7 @@ class Workflow(object):
         self.cmd = None
         self.engine_params = self.get_engine_params()
         self.workflow_params = self.get_wf_params()
-        self.run_obj = self.run()
+        self.run_obj = None
         self.tags = self.get_run_tags()
 
 
@@ -29,7 +30,7 @@ class Workflow(object):
                         cwd=self.run_dir,
                         stdout=PIPE,
                         stderr=PIPE)
-        return process
+        self.run_obj = process
 
     def runnable_url(self, url):
         if 'https://' in url:

@@ -1,6 +1,3 @@
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 import connexion
 from flask_cors import CORS
 from ga4gh.wes.workflow import workflow
@@ -64,6 +61,7 @@ def RunWorkflow(**kwargs):
     data = connexion.request.form.to_dict(flat=True)
     run = workflow.Workflow(run_id, data)
     runTracker.set_run(run_id, run)
+    run.run()
 
     return {"run_id": run_id}
 

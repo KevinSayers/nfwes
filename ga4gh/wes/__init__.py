@@ -1,5 +1,5 @@
-import client
-import server
+import ga4gh.wes.client
+import ga4gh.wes.server
 
 assert server
 assert client
