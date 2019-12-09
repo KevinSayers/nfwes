@@ -10,22 +10,17 @@ class Workflow(object):
         self.request_data = request_data
         self.starttime = datetime.now()
         self.run_attachments = self.get_attachments()
-        self.cmd = None
         self.engine_params = self.get_engine_params()
         self.workflow_params = self.get_wf_params()
+        self.cmd = None
         self.run_obj = None
         self.tags = self.get_run_tags()
 
 
     def run(self):
-        data = self.request_data
-        wf_url = self.runnable_url(data['workflow_url'])
-        process = Popen(['nextflow',
-                         'run',
-                         wf_url,
-                         self.workflow_params,
-                         self.engine_params,
-                         ],
+        self.cmd = self.get_cmd()
+        print (self.cmd)
+        process = Popen(self.cmd,
                         cwd=self.run_dir,
                         stdout=PIPE,
                         stderr=PIPE)
@@ -67,12 +62,11 @@ class Workflow(object):
 
     def get_status(self):
         out, err = self.run_obj.communicate()
-
-
         return {
             "run_id": self.run_id,
             "tags": self.tags,
             "state": self.get_state(),
+            "request": self.request_data,
             "run_log": {
                 "starttime": self.starttime,
                 "stderr": err,
@@ -84,7 +78,7 @@ class Workflow(object):
         try:
             return self.request_data['workflow_engine_parameters']
         except:
-            return ''
+            return None
 
     def get_attachments(self):
         return None
@@ -99,7 +93,23 @@ class Workflow(object):
         try:
             return self.request_data['workflow_params']
         except:
-            return ''
+            return None
+
+    def get_cmd(self) -> list:
+        data = self.request_data
+        wf_url = self.runnable_url(data['workflow_url'])
+
+        cmd_list = ['nextflow',
+                    'run',
+                    wf_url
+                    ]
+        if self.workflow_params is not None:
+            cmd_list.append(self.workflow_params)
+        if self.engine_params is not None:
+            cmd_list.append(self.engine_params)
+
+        return cmd_list
+
 
 
 
