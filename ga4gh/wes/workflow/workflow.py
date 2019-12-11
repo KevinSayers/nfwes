@@ -19,7 +19,6 @@ class Workflow(object):
 
     def run(self):
         self.cmd = self.get_cmd()
-        print (self.cmd)
         process = Popen(self.cmd,
                         cwd=self.run_dir,
                         stdout=PIPE,
@@ -47,7 +46,7 @@ class Workflow(object):
     def check_running(self):
         return self.run_obj.poll()
 
-    def get_state(self):
+    def get_state(self) -> str:
         state = None
         if self.check_running() is None:
             state = 'RUNNING'
@@ -60,7 +59,7 @@ class Workflow(object):
 
         return state
 
-    def get_status(self):
+    def get_status(self) -> dict:
         out, err = self.run_obj.communicate()
         return {
             "run_id": self.run_id,
@@ -83,13 +82,13 @@ class Workflow(object):
     def get_attachments(self):
         return None
 
-    def get_run_tags(self):
+    def get_run_tags(self) -> str:
         try:
             return self.request_data['tags']
         except:
             return None
 
-    def get_wf_params(self):
+    def get_wf_params(self) -> str:
         try:
             return self.request_data['workflow_params']
         except:
@@ -110,6 +109,5 @@ class Workflow(object):
 
         return cmd_list
 
-
-
-
+    def cancel_run(self):
+        self.run_obj.kill()

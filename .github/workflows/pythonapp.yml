@@ -1,4 +1,4 @@
-name: Python application
+name: nfwes
 
 on: [push]
 

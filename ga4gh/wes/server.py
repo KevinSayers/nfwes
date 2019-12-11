@@ -23,8 +23,25 @@ def GetRunLog(**kwargs):
     return {}
 
 
-def CancelRun(**kwargs):
-    return {}
+def CancelRun(run_id, **kwargs):
+    global runTracker
+    r = None
+
+    run = runTracker.get_run_by_id(run_id)
+    state = run.get_status()['state']
+    if state is 'RUNNING':
+        r = {
+            'msg': 'The workflow has been cancelled',
+            'status_code': 200
+        }
+    else:
+        r = {
+            'msg': 'The workflow cannot be cancelled as it is not in the RUNNING state',
+            'status_code': 500
+        }
+
+    return r
+
 
 
 def ListRuns(**kwargs):
