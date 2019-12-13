@@ -6,7 +6,7 @@ class TestWorkflow(unittest.TestCase):
     request = {
         'workflow_type': 'nextflow',
         'tags': 'testing',
-        'workflow_url': 'file:///wfs/main.nf',
+        'workflow_url': 'https://github.com/nextflow-io/hello',
         'workflow_params': '--message helloworld'
     }
 
@@ -18,7 +18,9 @@ class TestWorkflow(unittest.TestCase):
 
     def test_get_workflow_params(self):
         self.assertEqual(self.wf.get_wf_params(),
-                         '--message helloworld')
+                         ['--message', 'helloworld'])
 
-
+    def test_cmd(self):
+        self.assertEqual(self.wf.get_cmd(),
+                         ['nextflow', 'run', 'https://github.com/nextflow-io/hello', '--message', 'helloworld'])
 

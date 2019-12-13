@@ -75,7 +75,8 @@ class Workflow(object):
 
     def get_engine_params(self):
         try:
-            return self.request_data['workflow_engine_parameters']
+            params = self.request_data['workflow_engine_parameters']
+            return self.split_params(params)
         except:
             return None
 
@@ -88,9 +89,10 @@ class Workflow(object):
         except:
             return None
 
-    def get_wf_params(self) -> str:
+    def get_wf_params(self) -> list:
         try:
-            return self.request_data['workflow_params']
+            params = self.request_data['workflow_params']
+            return self.split_params(params)
         except:
             return None
 
@@ -103,11 +105,14 @@ class Workflow(object):
                     wf_url
                     ]
         if self.workflow_params is not None:
-            cmd_list.append(self.workflow_params)
+            cmd_list.extend(self.workflow_params)
         if self.engine_params is not None:
-            cmd_list.append(self.engine_params)
+            cmd_list.extend(self.engine_params)
 
         return cmd_list
 
     def cancel_run(self):
         self.run_obj.kill()
+
+    def split_params(self, param_str):
+        return param_str.split(' ')

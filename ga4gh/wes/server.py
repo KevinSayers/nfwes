@@ -19,6 +19,7 @@ class Runs():
     def get_run_by_id(self, run_id):
         return self.runs_dict[run_id]
 
+
 def GetRunLog(run_id, **kwargs):
     global runTracker
     run = runTracker.get_run_by_id(run_id)
@@ -103,18 +104,17 @@ def GetRunStatus(run_id, **kwargs):
 
 
 def configure_app():
-    SWAGGER_FILENAME = 'api/workflow_execution_service.swagger.yaml'
+    swagger_filename = 'api/workflow_execution_service.swagger.yaml'
     app = connexion.App(
         "ga4gh.wes.server",
         options={"swagger_ui": True})
-    app.add_api(SWAGGER_FILENAME)
+    app.add_api(swagger_filename)
 
     CORS(app.app)
     return app
 
-
-
 runTracker = Runs()
+
 
 def main():
     app = configure_app()

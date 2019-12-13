@@ -1,0 +1,4 @@
+__pycache__/
+ga4gh/wes/runs/
+test/runs
+.idea/
