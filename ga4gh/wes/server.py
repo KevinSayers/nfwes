@@ -19,7 +19,6 @@ class Runs():
     def get_run_by_id(self, run_id):
         return self.runs_dict[run_id]
 
-
 def GetRunLog(run_id, **kwargs):
     global runTracker
     run = runTracker.get_run_by_id(run_id)
@@ -79,9 +78,10 @@ def RunWorkflow(**kwargs):
     global runTracker
     run_id = uuid.uuid4().hex[:5]
     data = connexion.request.form.to_dict(flat=True)
+    files = connexion.request.files
 
     if data['workflow_type'] == 'nextflow':
-        run = workflow.Workflow(run_id, data)
+        run = workflow.Workflow(run_id, data, files)
         runTracker.set_run(run_id, run)
         run.run()
         return {"run_id": run_id}

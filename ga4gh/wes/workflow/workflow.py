@@ -4,12 +4,12 @@ from datetime import datetime
 import os
 
 class Workflow(object):
-    def __init__(self, run_id, request_data):
+    def __init__(self, run_id, request_data, request_files):
         self.run_id = run_id
         self.run_dir = self.setup_rundir()
         self.request_data = request_data
+        self.request_files = request_files
         self.starttime = datetime.now()
-        self.run_attachments = self.get_attachments()
         self.engine_params = self.get_engine_params()
         self.workflow_params = self.get_wf_params()
         self.cmd = None
@@ -19,6 +19,7 @@ class Workflow(object):
 
     def run(self):
         self.cmd = self.get_cmd()
+        self.stage_attachments()
         process = Popen(self.cmd,
                         cwd=self.run_dir,
                         stdout=PIPE,
@@ -80,8 +81,13 @@ class Workflow(object):
         except:
             return None
 
-    def get_attachments(self):
-        return None
+    def stage_attachments(self):
+        files = self.request_files.to_dict(flat=False)['workflow_attachment']
+        for file in files:
+            filedata = file.read()
+            with open(os.path.join(self.run_dir, file.filename), 'wb') as f:
+                f.write(filedata)
+                f.close()
 
     def get_run_tags(self) -> str:
         try:
