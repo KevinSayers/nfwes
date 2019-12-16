@@ -101,8 +101,6 @@ def GetRunStatus(run_id, **kwargs):
     }
 
 
-
-
 def configure_app():
     swagger_filename = 'api/workflow_execution_service.swagger.yaml'
     app = connexion.App(

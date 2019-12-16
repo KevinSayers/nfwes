@@ -37,6 +37,17 @@ curl -X POST --header 'Content-Type: multipart/form-data' \
   'http://127.0.0.1:8080/ga4gh/wes/v1/runs'
 ```
 
+### Running a workflow with a file attachment
+This can be used to attach files such as a config file. This file will be automatically staged in the run directory. 
+```shell script
+curl -X POST --header 'Content-Type: multipart/form-data' \
+  --header 'Accept: application/problem+json' \
+  -F workflow_type=nextflow \
+  -F workflow_attachment=@<Absolute path to demo folder>/nextflow.config  \
+  -F workflow_url=file://<Absolute path to demo folder>/main.nf \   
+  'http://127.0.0.1:8080/ga4gh/wes/v1/runs'
+
+```
 ### Checking the status of a workflow
 ```shell script
 curl -X GET --header 'Accept: application/problem+json' \

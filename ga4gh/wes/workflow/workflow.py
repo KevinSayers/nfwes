@@ -4,7 +4,7 @@ from datetime import datetime
 import os
 
 class Workflow(object):
-    def __init__(self, run_id, request_data, request_files):
+    def __init__(self, run_id, request_data, request_files=None):
         self.run_id = run_id
         self.run_dir = self.setup_rundir()
         self.request_data = request_data
@@ -82,12 +82,13 @@ class Workflow(object):
             return None
 
     def stage_attachments(self):
-        files = self.request_files.to_dict(flat=False)['workflow_attachment']
-        for file in files:
-            filedata = file.read()
-            with open(os.path.join(self.run_dir, file.filename), 'wb') as f:
-                f.write(filedata)
-                f.close()
+        if self.request_files is not None:
+            files = self.request_files.to_dict(flat=False)['workflow_attachment']
+            for file in files:
+                filedata = file.read()
+                with open(os.path.join(self.run_dir, file.filename), 'wb') as f:
+                    f.write(filedata)
+                    f.close()
 
     def get_run_tags(self) -> str:
         try:
