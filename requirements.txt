@@ -3,3 +3,7 @@ swagger-ui-py
 flask_cors
 bravado-core
 bravado
+Flask-SQLAlchemy
+flask-marshmallow
+marshmallow-sqlalchemy
+marshmallow
